@@ -65,6 +65,8 @@ let selectedFile = null;
 let currentContractRecord = null;
 let chatHistory = [];
 let toastTimer = null;
+let currentExtracts = [];
+let currentExtractIndex = 0;
 
 // ─── Utils ────────────────────────────────────────────────────────────────────
 const fmt = {
@@ -92,8 +94,9 @@ let isDark = localStorage.getItem("theme") === "dark" || (!localStorage.getItem(
 function applyTheme() {
   document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
   themeToggle.innerHTML = isDark 
-    ? '<span class="theme-icon">☀️</span><span class="theme-label">Modo Claro</span>'
-    : '<span class="theme-icon">🌙</span><span class="theme-label">Modo Oscuro</span>';
+    ? '<span class="theme-icon"><i data-lucide="sun"></i></span><span class="theme-label">Modo Claro</span>'
+    : '<span class="theme-icon"><i data-lucide="moon"></i></span><span class="theme-label">Modo Oscuro</span>';
+  if (window.lucide) window.lucide.createIcons();
 }
 themeToggle.addEventListener("click", () => {
   isDark = !isDark;
@@ -177,11 +180,12 @@ toggleChatBtn.addEventListener("click", () => {
   const layout = document.querySelector(".results-layout");
   if (isChatHidden) {
     layout.classList.add("chat-hidden");
-    toggleChatBtn.textContent = "💬 Mostrar Chat";
+    toggleChatBtn.innerHTML = '<i data-lucide="message-square"></i> Mostrar Chat';
   } else {
     layout.classList.remove("chat-hidden");
-    toggleChatBtn.textContent = "💬 Ocultar Chat";
+    toggleChatBtn.innerHTML = '<i data-lucide="message-square"></i> Ocultar Chat';
   }
+  if (window.lucide) window.lucide.createIcons();
 });
 
 // ─── File Handling ────────────────────────────────────────────────────────────
@@ -293,10 +297,11 @@ function renderHistoryList(items) {
     div.dataset.id = item.id;
     div.title = item.metadata.nombre_archivo;
     const titleText = item.analysis.nombre_descriptivo || item.analysis.tipo_contrato || "Contrato";
-    div.innerHTML = `📄 ${titleText} <br><small style="color:var(--text-muted); font-size:11px;">${fmt.date(item.metadata.analizado_en)}</small>`;
+    div.innerHTML = `<i data-lucide="file-text" style="width:14px;height:14px;"></i> ${titleText} <br><small style="color:var(--text-muted); font-size:11px;">${fmt.date(item.metadata.analizado_en)}</small>`;
     div.addEventListener("click", () => fetchContractData(item.id));
     historyList.appendChild(div);
   });
+  if (window.lucide) window.lucide.createIcons();
 }
 
 // ─── Rendering Results ────────────────────────────────────────────────────────
@@ -313,41 +318,51 @@ function renderResults(record) {
   partesChips.innerHTML = (analysis.partes || []).map(p => `<span class="chip">${p}</span>`).join("");
   
   // Cláusulas
+  currentExtracts = [];
   const clauses = analysis.clausulas || [];
   clausesCount.textContent = clauses.length;
-  clauseList.innerHTML = clauses.map((c, i) => `
+  clauseList.innerHTML = clauses.map((c, i) => {
+    let extractIdx = -1;
+    if (c.texto_original) {
+      extractIdx = currentExtracts.length;
+      currentExtracts.push({ type: 'Cláusula', title: c.titulo, page: c.pagina, text: c.texto_original });
+    }
+    return `
     <li class="c-item">
       <div class="trace-header">
         <h4 class="c-title">${c.titulo}</h4>
-        ${c.pagina ? `<span class="page-badge">📄 ${c.pagina}</span>` : ''}
+        ${c.pagina ? `<span class="page-badge"><i data-lucide="file-text"></i> ${c.pagina}</span>` : ''}
       </div>
       <p class="c-desc">${c.descripcion}</p>
-      ${c.texto_original ? `
-        <button class="btn-toggle-text" onclick="document.getElementById('c-orig-${i}').classList.toggle('show')">
-          🔍 Ver texto original
+      ${extractIdx >= 0 ? `
+        <button class="btn-toggle-text" onclick="window.openSourceModal(${extractIdx})">
+          <i data-lucide="eye"></i> Ver texto original
         </button>
-        <div id="c-orig-${i}" class="original-text-box">${c.texto_original}</div>
       ` : ''}
     </li>
-  `).join("");
+  `}).join("");
 
   // Riesgos
   const risks = analysis.riesgos || [];
   risksCount.textContent = risks.length;
   riskList.innerHTML = risks.map((r, i) => {
     const lvl = (r.nivel || "bajo").toLowerCase();
+    let extractIdx = -1;
+    if (r.texto_original) {
+      extractIdx = currentExtracts.length;
+      currentExtracts.push({ type: 'Riesgo', title: r.titulo, page: r.pagina, text: r.texto_original });
+    }
     return `
       <li class="r-item r-item--${lvl}">
         <div class="trace-header">
           <h4 class="r-title"><span class="r-badge badge-${lvl}">${lvl}</span>${r.titulo}</h4>
-          ${r.pagina ? `<span class="page-badge">📄 ${r.pagina}</span>` : ''}
+          ${r.pagina ? `<span class="page-badge"><i data-lucide="file-text"></i> ${r.pagina}</span>` : ''}
         </div>
         <p class="r-desc">${r.descripcion}</p>
-        ${r.texto_original ? `
-          <button class="btn-toggle-text" onclick="document.getElementById('r-orig-${i}').classList.toggle('show')">
-            🔍 Ver texto original
+        ${extractIdx >= 0 ? `
+          <button class="btn-toggle-text" onclick="window.openSourceModal(${extractIdx})">
+            <i data-lucide="eye"></i> Ver texto original
           </button>
-          <div id="r-orig-${i}" class="original-text-box">${r.texto_original}</div>
         ` : ''}
       </li>
     `;
@@ -372,6 +387,7 @@ function renderResults(record) {
 
   showPanel("results");
   loadHistory(); // refresh sidebar highlight
+  if (window.lucide) window.lucide.createIcons();
 }
 
 // ─── API Calls ────────────────────────────────────────────────────────────────
@@ -490,6 +506,40 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   });
 });
 
+// Source Modal Logic
+window.openSourceModal = function(index) {
+  if (!currentExtracts || !currentExtracts[index]) return;
+  currentExtractIndex = index;
+  renderSourceModal();
+  $("modalSource").style.display = "flex";
+};
+
+function renderSourceModal() {
+  const extract = currentExtracts[currentExtractIndex];
+  $("sourcePage").textContent = extract.page || "?";
+  $("sourceQuote").textContent = extract.text;
+  
+  const btnPrev = $("sourcePrev");
+  const btnNext = $("sourceNext");
+  
+  btnPrev.disabled = currentExtractIndex === 0;
+  btnNext.disabled = currentExtractIndex === currentExtracts.length - 1;
+}
+
+$("sourcePrev")?.addEventListener("click", () => {
+  if (currentExtractIndex > 0) {
+    currentExtractIndex--;
+    renderSourceModal();
+  }
+});
+
+$("sourceNext")?.addEventListener("click", () => {
+  if (currentExtractIndex < currentExtracts.length - 1) {
+    currentExtractIndex++;
+    renderSourceModal();
+  }
+});
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 uploadForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -498,3 +548,4 @@ uploadForm.addEventListener("submit", (e) => {
 
 // Start
 loadHistory();
+if (window.lucide) window.lucide.createIcons();

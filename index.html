@@ -25,7 +25,7 @@
 
     <nav class="sidebar-nav">
       <a href="#" class="nav-item nav-item--active" id="navAnalizar">
-        <span class="nav-icon">📤</span>
+        <span class="nav-icon"><i data-lucide="upload"></i></span>
         <span class="nav-label">Nuevo Análisis</span>
       </a>
       <div class="nav-section-title">Historial (Local)</div>
@@ -36,7 +36,7 @@
 
     <div class="sidebar-footer">
       <button id="themeToggle" class="theme-toggle">
-        <span class="theme-icon">🌙</span>
+        <span class="theme-icon"><i data-lucide="moon" id="themeIconSVG"></i></span>
         <span class="theme-label">Modo Oscuro</span>
       </button>
       <div class="ai-status" title="Tus documentos se cifran y procesan temporalmente en servidores de Google.">
@@ -174,12 +174,12 @@
               <p class="results-sub" id="resultsSub">—</p>
             </div>
             <div class="results-actions">
-              <button class="btn-outline" id="toggleChatBtn">💬 Ocultar Chat</button>
-              <button class="btn-outline" id="printBtn">🖨️ Imprimir</button>
-              <button class="btn-new" id="resetBtn">＋ Nuevo</button>
+              <button class="btn-outline" id="toggleChatBtn"><i data-lucide="message-square"></i> Ocultar Chat</button>
+              <button class="btn-outline" id="printBtn"><i data-lucide="printer"></i> Imprimir</button>
+              <button class="btn-new" id="resetBtn"><i data-lucide="plus"></i> Nuevo</button>
               <!-- DELETE BTN -->
               <button class="btn-outline" id="deleteBtn" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
-                🗑️ Borrar Mis Datos
+                <i data-lucide="trash-2"></i> Borrar Mis Datos
               </button>
             </div>
           </div>
@@ -229,7 +229,7 @@
         <!-- Right Column: Chat -->
         <aside class="chat-sidebar">
           <div class="chat-header">
-            <span class="chat-icon">💬</span>
+            <span class="chat-icon"><i data-lucide="message-circle"></i></span>
             <div class="chat-header-text">
               <h3>Chat con el Contrato</h3>
               <p>Haz preguntas sobre el documento</p>
@@ -301,6 +301,20 @@
     </div>
   </div>
 
+  <!-- Modal Source -->
+  <div class="modal-overlay" id="modalSource" style="display:none;">
+    <div class="modal-content">
+      <button class="modal-close">✕</button>
+      <h2>Texto Original (Pág. <span id="sourcePage"></span>)</h2>
+      <blockquote class="source-quote" id="sourceQuote"></blockquote>
+      <div class="modal-footer">
+        <button class="btn-nav" id="sourcePrev"><i data-lucide="chevron-left"></i> Anterior</button>
+        <button class="btn-nav" id="sourceNext">Siguiente <i data-lucide="chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="app.js" type="module"></script>
 </body>
 </html>
