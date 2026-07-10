@@ -61,6 +61,8 @@
   
   --success: #34d399;
   --success-bg: rgba(52, 211, 153, 0.1);
+  --warning: #fbbf24;
+  --warning-bg: rgba(245, 158, 11, 0.1);
   --danger: #f87171;
   --danger-bg: rgba(248, 113, 113, 0.1);
   
