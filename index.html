@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ContractAI — Analizador de Contratos con IA</title>
+  <meta name="description" content="Analiza contratos PDF con IA: resumen, cláusulas importantes, riesgos y chat interactivo. 100% Privado." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SIDEBAR
+  ════════════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">⚖️</div>
+      <div class="sidebar-logo-text">
+        <span>Contract</span><span class="accent">AI</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item nav-item--active" id="navAnalizar">
+        <span class="nav-icon">📤</span>
+        <span class="nav-label">Nuevo Análisis</span>
+      </a>
+      <div class="nav-section-title">Historial (Local)</div>
+      <div id="historyList" class="history-list">
+        <!-- History items will be injected here -->
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button id="themeToggle" class="theme-toggle">
+        <span class="theme-icon">🌙</span>
+        <span class="theme-label">Modo Oscuro</span>
+      </button>
+      <div class="ai-status" title="Tus documentos se cifran y procesan temporalmente en servidores de Google.">
+        <span class="ai-dot"></span>
+        <span class="ai-label">IA Segura Activa</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ════════════════════════════════════════════════════════════════ -->
+  <main class="main">
+
+    <!-- ── TOP BAR ─────────────────────────────────────────────── -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title">Analizador de Contratos</h1>
+        <span class="page-subtitle">Análisis automatizado y privado</span>
+      </div>
+    </header>
+
+    <!-- ── UPLOAD PANEL ────────────────────────────────────────── -->
+    <section class="panel" id="panelUpload">
+      <div class="panel-inner">
+        <!-- Hero copy -->
+        <div class="hero-copy">
+          <div class="hero-tag">✨ Inteligencia Artificial Legal y Segura</div>
+          <h2 class="hero-headline">
+            Analiza contratos<br />
+            <span class="gradient-text">en segundos</span>
+          </h2>
+          <p class="hero-body">
+            Sube cualquier contrato en PDF (digital o escaneado). Tu documento se procesa de forma <strong>temporal</strong> en servidores seguros de Google Gemini y no se guarda permanentemente en nuestra plataforma.
+          </p>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-row">
+          <div class="stat-chip">
+            <span class="stat-value">~10s</span>
+            <span class="stat-label">Análisis rápido</span>
+          </div>
+          <div class="stat-sep"></div>
+          <div class="stat-chip">
+            <span class="stat-value">20MB</span>
+            <span class="stat-label">Tamaño máximo</span>
+          </div>
+          <div class="stat-sep"></div>
+          <div class="stat-chip">
+            <span class="stat-value">🔒 Privado</span>
+            <span class="stat-label">Autodestrucción</span>
+          </div>
+        </div>
+
+        <!-- Upload form -->
+        <form id="uploadForm" enctype="multipart/form-data">
+          <input type="file" id="fileInput" name="contrato" accept=".pdf" hidden />
+
+          <!-- Drop zone -->
+          <div class="dropzone" id="dropZone">
+            <div class="dropzone-bg"></div>
+            <div class="dropzone-content">
+              <div class="drop-icon-wrap" id="dropIconWrap">
+                <div class="drop-icon-ring"></div>
+                <span class="drop-icon" id="dropIcon">📄</span>
+              </div>
+              <div class="drop-texts" id="dropTexts">
+                <p class="drop-title">Arrastra tu contrato aquí</p>
+                <p class="drop-sub">PDF (Texto o Imagen) · Máx 20 MB</p>
+              </div>
+              <div class="file-info" id="fileInfo" hidden>
+                <span class="file-name" id="fileName"></span>
+                <span class="file-meta" id="fileMeta"></span>
+              </div>
+              <button type="button" class="btn-choose" id="btnChoose">
+                Seleccionar archivo
+              </button>
+            </div>
+          </div>
+
+          <!-- Analyze button -->
+          <button type="submit" class="btn-analyze" id="analyzeBtn" disabled>
+            <span class="btn-analyze-inner">
+              <span class="btn-sparkle">✦</span>
+              <span id="btnText">Analizar con IA</span>
+              <span class="btn-arrow">→</span>
+            </span>
+            <div class="btn-glow"></div>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ── PROGRESS PANEL ──────────────────────────────────────── -->
+    <section class="panel panel--centered" id="panelProgress" hidden>
+      <div class="panel-inner panel-inner--narrow">
+        <div class="progress-orb">
+          <div class="orb-ring orb-ring--1"></div>
+          <div class="orb-ring orb-ring--2"></div>
+          <div class="orb-ring orb-ring--3"></div>
+          <span class="orb-icon">⚡</span>
+        </div>
+        <h2 class="progress-title">Analizando contrato</h2>
+        <p class="progress-step" id="progressStep">Iniciando análisis...</p>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-steps-row" id="progressStepsRow">
+          <div class="ps-item" id="ps0">
+            <span class="ps-dot"></span><span>Seguridad y Subida</span>
+          </div>
+          <div class="ps-item" id="ps1">
+            <span class="ps-dot"></span><span>Procesando con IA</span>
+          </div>
+          <div class="ps-item" id="ps2">
+            <span class="ps-dot"></span><span>Detectando cláusulas</span>
+          </div>
+          <div class="ps-item" id="ps3">
+            <span class="ps-dot"></span><span>Generando reporte</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── RESULTS PANEL ───────────────────────────────────────── -->
+    <section class="panel panel--results" id="panelResults" hidden>
+      <div class="panel-inner results-layout">
+        
+        <!-- Left Column: Report -->
+        <div class="results-report">
+          <div class="results-topbar">
+            <div>
+              <h2 class="results-title">Análisis completado</h2>
+              <p class="results-sub" id="resultsSub">—</p>
+            </div>
+            <div class="results-actions">
+              <button class="btn-outline" id="toggleChatBtn">💬 Ocultar Chat</button>
+              <button class="btn-outline" id="printBtn">🖨️ Imprimir</button>
+              <button class="btn-new" id="resetBtn">＋ Nuevo</button>
+              <!-- DELETE BTN -->
+              <button class="btn-outline" id="deleteBtn" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+                🗑️ Borrar Mis Datos
+              </button>
+            </div>
+          </div>
+
+          <div class="meta-bar" id="metaBar"></div>
+
+          <div class="results-grid">
+            <!-- Summary card -->
+            <div class="rcard rcard--full" id="rcardSummary">
+              <div class="rcard-head">
+                <div class="rcard-icon-wrap rcard-icon-wrap--purple">📋</div>
+                <div>
+                  <h3 class="rcard-title">Resumen Ejecutivo</h3>
+                  <span class="rcard-type" id="contractType"></span>
+                </div>
+              </div>
+              <p class="rcard-summary" id="summaryText"></p>
+              <div class="partes-chips" id="partesChips"></div>
+            </div>
+
+            <!-- Clauses card -->
+            <div class="rcard" id="rcardClauses">
+              <div class="rcard-head">
+                <div class="rcard-icon-wrap rcard-icon-wrap--green">✅</div>
+                <div>
+                  <h3 class="rcard-title">Cláusulas Importantes</h3>
+                  <span class="rcard-count" id="clausesCount"></span>
+                </div>
+              </div>
+              <ul class="clause-list" id="clauseList"></ul>
+            </div>
+
+            <!-- Risks card -->
+            <div class="rcard" id="rcardRisks">
+              <div class="rcard-head">
+                <div class="rcard-icon-wrap rcard-icon-wrap--red">⚠️</div>
+                <div>
+                  <h3 class="rcard-title">Mapa de Riesgos</h3>
+                  <span class="rcard-count" id="risksCount"></span>
+                </div>
+              </div>
+              <ul class="risk-list" id="riskList"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Chat -->
+        <aside class="chat-sidebar">
+          <div class="chat-header">
+            <span class="chat-icon">💬</span>
+            <div class="chat-header-text">
+              <h3>Chat con el Contrato</h3>
+              <p>Haz preguntas sobre el documento</p>
+            </div>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg chat-msg--bot">
+              ¡Hola! He leído el contrato. ¿Qué deseas saber sobre él?
+            </div>
+          </div>
+          <form class="chat-input-area" id="chatForm">
+            <input type="text" id="chatInput" placeholder="Ej: ¿Cuál es la penalidad?" autocomplete="off" />
+            <button type="submit" id="chatSendBtn" disabled>↑</button>
+          </form>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- FOOTER PRIVACIDAD -->
+    <footer class="app-footer">
+      <p>ContractAI - Creado como demostración. No reemplaza el consejo legal profesional.</p>
+      <div class="footer-links">
+        <a href="#" class="open-modal" data-modal="modalPrivacy">Aviso de Privacidad</a>
+        <span class="dot-sep">•</span>
+        <a href="#" class="open-modal" data-modal="modalTerms">Términos de Uso</a>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TOAST & MODALS
+  ════════════════════════════════════════════════════════════════ -->
+  <div class="toast" id="toast" hidden>
+    <span class="toast-icon">⚠️</span>
+    <span class="toast-msg" id="toastMsg"></span>
+    <button class="toast-close" id="toastClose">✕</button>
+  </div>
+
+  <!-- Modal Privacy -->
+  <div class="modal-overlay" id="modalPrivacy" style="display:none;">
+    <div class="modal-content">
+      <button class="modal-close">✕</button>
+      <h2>Aviso de Privacidad</h2>
+      <p>En <strong>ContractAI</strong> valoramos enormemente tu privacidad. Esta herramienta ha sido diseñada con un enfoque <em>Privacy-First</em>:</p>
+      <ul>
+        <li><strong>Sin Almacenamiento Persistente:</strong> No guardamos tus contratos en bases de datos propias.</li>
+        <li><strong>Procesamiento Seguro:</strong> Los archivos se suben temporalmente a través de la API oficial de Google Gemini exclusivamente para su análisis.</li>
+        <li><strong>Autodestrucción:</strong> Puedes solicitar la eliminación inmediata de tus datos usando el botón "Borrar Mis Datos". Google también los descarta automáticamente tras 48 horas de inactividad.</li>
+        <li><strong>Historial Local:</strong> El historial de tus análisis se guarda de forma segura únicamente en tu navegador (Local Storage).</li>
+      </ul>
+      <p><em>Al usar esta herramienta, aceptas que el archivo sea procesado por la IA de Google Gemini bajo sus propias <a href="https://policies.google.com/privacy" target="_blank" style="color:var(--accent-color)">políticas de privacidad</a>.</em></p>
+    </div>
+  </div>
+
+  <!-- Modal Terms -->
+  <div class="modal-overlay" id="modalTerms" style="display:none;">
+    <div class="modal-content">
+      <button class="modal-close">✕</button>
+      <h2>Términos de Uso</h2>
+      <p><strong>1. Propósito de la Herramienta</strong><br>
+      ContractAI es un proyecto de demostración que utiliza Inteligencia Artificial para extraer resúmenes y posibles riesgos de documentos en formato PDF.</p>
+      
+      <p><strong>2. No es Asesoramiento Legal</strong><br>
+      La información generada por la IA es puramente orientativa. <strong>ContractAI no reemplaza en ningún caso el consejo de un abogado cualificado.</strong> No debes tomar decisiones legales, financieras o personales basándote únicamente en los resultados de esta aplicación.</p>
+      
+      <p><strong>3. Responsabilidad</strong><br>
+      El creador de esta aplicación no se hace responsable de posibles errores u omisiones en los análisis generados por la Inteligencia Artificial (alucinaciones de la IA) ni de los daños derivados de su uso.</p>
+    </div>
+  </div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
