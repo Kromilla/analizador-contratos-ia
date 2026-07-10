@@ -175,7 +175,6 @@ deleteBtn?.addEventListener("click", async () => {
 });
 
 // Mostrar/Ocultar Chat
-const toggleChatBtn = document.getElementById("toggleChatBtn");
 const layout = document.querySelector(".results-layout");
 toggleChatBtn.addEventListener("click", () => {
   const isChatHidden = layout.classList.contains("chat-hidden");
