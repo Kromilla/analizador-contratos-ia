@@ -336,8 +336,8 @@ a { text-decoration: none; color: inherit; }
 }
 
 .results-topbar { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
-.results-title { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
-.results-sub { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+.results-title { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
+.results-sub { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
 .results-actions { display: flex; gap: 12px; }
 
 .btn-new { padding: 10px 20px; border-radius: var(--radius-sm); background-color: var(--text-main); color: var(--bg-main); font-weight: 600; transition: opacity 0.2s; }
@@ -395,11 +395,20 @@ a { text-decoration: none; color: inherit; }
 .badge-alto { background-color: var(--danger); }
 .badge-medio { background-color: var(--warning); }
 .badge-bajo { background-color: var(--success); }
-.c-desc, .r-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+.c-desc, .r-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 8px; }
+
+/* Trazabilidad (Páginas y Texto Original) */
+.trace-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.page-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; background-color: var(--bg-input); border: 1px solid var(--border); font-size: 11px; font-weight: 600; color: var(--text-muted); }
+.btn-toggle-text { font-size: 12px; color: var(--primary); background: transparent; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600; padding: 4px 8px; border-radius: 4px; transition: background-color 0.2s; }
+.btn-toggle-text:hover { background-color: var(--primary-light); }
+.original-text-box { margin-top: 8px; padding: 12px; background-color: var(--bg-input); border-left: 3px solid var(--primary); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 13px; font-style: italic; color: var(--text-muted); display: none; line-height: 1.5; }
+.original-text-box.show { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Right: Chat Sidebar */
 .chat-sidebar {
-  width: 380px;
+  width: 460px;
   background-color: var(--bg-chat);
   border-left: 1px solid var(--border);
   display: flex;

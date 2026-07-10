@@ -47,18 +47,23 @@ const upload = multer({
 // ─── Prompt de análisis ───────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `Eres un abogado experto en análisis de contratos. Analiza el documento proporcionado y devuelve EXCLUSIVAMENTE un JSON con esta estructura:
 {
+  "nombre_descriptivo": "Un título corto (máx 5 palabras) que identifique específicamente al contrato (ej: Arrendamiento Local Centro)",
   "resumen": "Un párrafo claro y conciso explicando de qué trata el contrato, las partes involucradas y el propósito principal.",
   "clausulas": [
     {
       "titulo": "Nombre de la cláusula",
-      "descripcion": "Explicación breve de qué establece esta cláusula y su importancia."
+      "descripcion": "Explicación breve de qué establece esta cláusula y su importancia.",
+      "pagina": "Número de página o sección exacta",
+      "texto_original": "Extracto literal de la cláusula en el documento original"
     }
   ],
   "riesgos": [
     {
       "nivel": "alto|medio|bajo",
       "titulo": "Nombre del riesgo",
-      "descripcion": "Explicación del riesgo potencial y por qué podría ser problemático."
+      "descripcion": "Explicación del riesgo potencial y por qué podría ser problemático.",
+      "pagina": "Número de página o sección exacta donde se encuentra",
+      "texto_original": "Extracto literal de la parte riesgosa en el documento original"
     }
   ],
   "tipo_contrato": "Tipo de contrato detectado (ej: Contrato de trabajo, Arrendamiento, etc.)",

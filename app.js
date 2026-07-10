@@ -292,7 +292,8 @@ function renderHistoryList(items) {
     div.className = "history-item";
     div.dataset.id = item.id;
     div.title = item.metadata.nombre_archivo;
-    div.innerHTML = `📄 ${item.analysis.tipo_contrato} <br><small style="color:var(--text-muted); font-size:11px;">${fmt.date(item.metadata.analizado_en)}</small>`;
+    const titleText = item.analysis.nombre_descriptivo || item.analysis.tipo_contrato || "Contrato";
+    div.innerHTML = `📄 ${titleText} <br><small style="color:var(--text-muted); font-size:11px;">${fmt.date(item.metadata.analizado_en)}</small>`;
     div.addEventListener("click", () => fetchContractData(item.id));
     historyList.appendChild(div);
   });
@@ -314,22 +315,40 @@ function renderResults(record) {
   // Cláusulas
   const clauses = analysis.clausulas || [];
   clausesCount.textContent = clauses.length;
-  clauseList.innerHTML = clauses.map(c => `
+  clauseList.innerHTML = clauses.map((c, i) => `
     <li class="c-item">
-      <h4 class="c-title">${c.titulo}</h4>
+      <div class="trace-header">
+        <h4 class="c-title">${c.titulo}</h4>
+        ${c.pagina ? `<span class="page-badge">📄 ${c.pagina}</span>` : ''}
+      </div>
       <p class="c-desc">${c.descripcion}</p>
+      ${c.texto_original ? `
+        <button class="btn-toggle-text" onclick="document.getElementById('c-orig-${i}').classList.toggle('show')">
+          🔍 Ver texto original
+        </button>
+        <div id="c-orig-${i}" class="original-text-box">${c.texto_original}</div>
+      ` : ''}
     </li>
   `).join("");
 
   // Riesgos
   const risks = analysis.riesgos || [];
   risksCount.textContent = risks.length;
-  riskList.innerHTML = risks.map(r => {
+  riskList.innerHTML = risks.map((r, i) => {
     const lvl = (r.nivel || "bajo").toLowerCase();
     return `
       <li class="r-item r-item--${lvl}">
-        <h4 class="r-title"><span class="r-badge badge-${lvl}">${lvl}</span>${r.titulo}</h4>
+        <div class="trace-header">
+          <h4 class="r-title"><span class="r-badge badge-${lvl}">${lvl}</span>${r.titulo}</h4>
+          ${r.pagina ? `<span class="page-badge">📄 ${r.pagina}</span>` : ''}
+        </div>
         <p class="r-desc">${r.descripcion}</p>
+        ${r.texto_original ? `
+          <button class="btn-toggle-text" onclick="document.getElementById('r-orig-${i}').classList.toggle('show')">
+            🔍 Ver texto original
+          </button>
+          <div id="r-orig-${i}" class="original-text-box">${r.texto_original}</div>
+        ` : ''}
       </li>
     `;
   }).join("");
