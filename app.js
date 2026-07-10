@@ -184,6 +184,13 @@ toggleChatBtn.addEventListener("click", () => {
   } else {
     layout.classList.remove("chat-hidden");
     toggleChatBtn.innerHTML = '<i data-lucide="message-square"></i> Ocultar Chat';
+    
+    // En móviles, hacer scroll automático hacia el chat
+    if (window.innerWidth <= 768) {
+      setTimeout(() => {
+        document.querySelector(".chat-sidebar").scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
   }
   if (window.lucide) window.lucide.createIcons();
 });
