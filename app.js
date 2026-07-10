@@ -174,26 +174,36 @@ deleteBtn?.addEventListener("click", async () => {
   }
 });
 
-let isChatHidden = false;
+// Mostrar/Ocultar Chat
+const toggleChatBtn = document.getElementById("toggleChatBtn");
+const layout = document.querySelector(".results-layout");
 toggleChatBtn.addEventListener("click", () => {
-  isChatHidden = !isChatHidden;
-  const layout = document.querySelector(".results-layout");
+  const isChatHidden = layout.classList.contains("chat-hidden");
+  
   if (isChatHidden) {
-    layout.classList.add("chat-hidden");
-    toggleChatBtn.innerHTML = '<i data-lucide="message-square"></i> Mostrar Chat';
-  } else {
     layout.classList.remove("chat-hidden");
     toggleChatBtn.innerHTML = '<i data-lucide="message-square"></i> Ocultar Chat';
-    
-    // En móviles, hacer scroll automático hacia el chat
-    if (window.innerWidth <= 768) {
-      setTimeout(() => {
-        document.querySelector(".chat-sidebar").scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 50);
-    }
+  } else {
+    layout.classList.add("chat-hidden");
+    toggleChatBtn.innerHTML = '<i data-lucide="message-square"></i> Mostrar Chat';
   }
   if (window.lucide) window.lucide.createIcons();
 });
+
+// Mobile Chat Overlay Logic
+const chatFab = document.getElementById("chatFab");
+const chatCloseBtn = document.getElementById("chatCloseBtn");
+
+if (chatFab && chatCloseBtn) {
+  chatFab.addEventListener("click", () => {
+    layout.classList.add("chat-open");
+  });
+  
+  chatCloseBtn.addEventListener("click", () => {
+    layout.classList.remove("chat-open");
+  });
+}
+
 
 // ─── File Handling ────────────────────────────────────────────────────────────
 function setFile(file) {

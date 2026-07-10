@@ -427,6 +427,7 @@ a { text-decoration: none; color: inherit; }
 .chat-icon { font-size: 24px; }
 .chat-header-text h3 { font-size: 16px; font-weight: 700; }
 .chat-header-text p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.chat-close-mobile, .chat-fab { display: none; }
 
 .chat-messages {
   flex: 1;
@@ -579,7 +580,54 @@ a { text-decoration: none; color: inherit; }
   .results-actions { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
   .results-actions button { flex: 1; min-width: calc(50% - 8px); justify-content: center; font-size: 13px; padding: 10px; }
   
-  .chat-sidebar { width: 100%; height: 500px; border-left: none; border-top: 1px solid var(--border); margin-top: 32px; border-radius: var(--radius-md); }
+  /* Chat Bubble (FAB) */
+  .chat-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), #a855f7);
+    color: white;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    z-index: 900;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .chat-fab:active { transform: scale(0.95); }
+  
+  /* Chat Overlay */
+  .chat-sidebar { 
+    position: fixed; 
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100vh; 
+    border: none; margin-top: 0; border-radius: 0; 
+    z-index: 1000; 
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1);
+  }
+  .results-layout.chat-open .chat-sidebar {
+    transform: translateY(0);
+  }
+  .chat-close-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--bg-hover);
+    color: var(--text-main);
+    margin-left: auto;
+  }
+  
+  /* Hide the toggle button in the grid */
+  #toggleChatBtn { display: none; }
 }
 /* --------------------------------------------------------------------------
    MODALS & FOOTER
