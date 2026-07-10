@@ -565,6 +565,27 @@ a { text-decoration: none; color: inherit; }
   border-top: 1px solid var(--border);
   background-color: var(--bg-panel);
 }
+
+/* Ocultar footer cuando se muestran los resultados para que no rompa el diseño ni estorbe al chat */
+#panelResults:not([hidden]) ~ .app-footer {
+  display: none;
+}
+
+/* Scrollbars personalizadas premium */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
 .footer-links {
   margin-top: 8px;
   display: flex;
