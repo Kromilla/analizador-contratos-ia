@@ -88,6 +88,7 @@ body {
 .gradient-text {
   background: linear-gradient(135deg, var(--primary), #a855f7);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 button { cursor: pointer; border: none; background: none; font-family: inherit; }
